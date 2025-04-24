@@ -1,0 +1,35 @@
+{
+  "name": "@digitalocean/mcp",
+  "version": "0.0.1",
+  "description": "DigitalOcean MCP",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/digitalocean/digitalocean-mcp"
+  },
+  "author": "DigitalOcean",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "start:stdio": "node build/index.js stdio",
+    "generate:schema": "npx typed-openapi src/specs/digitalocean-openapi.yaml -r zod"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.9.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.1",
+    "@types/node": "^22.14.0",
+    "js-yaml": "^4.1.0",
+    "typed-openapi": "^0.10.1",
+    "typescript": "^5.8.3"
+  }
+}
