@@ -1,12 +1,40 @@
+interface LogEntry {
+  level: string;
+  message: string;
+  timestamp: string;
+}
+
+function logMessage(entry: LogEntry) {
+  process.stderr.write(`${JSON.stringify(entry)}\n`);
+}
+
+function toMessage(...args: Parameters<typeof console.error>): string {
+  return args
+    .map((arg) => (typeof arg === "object" ? JSON.stringify(arg) : String(arg)))
+    .join(" ");
+}
+
 const logger = {
   info: (...args: any[]) => {
-    console.log(...args);
+    logMessage({
+      level: "info",
+      message: toMessage(...args),
+      timestamp: new Date().toISOString(),
+    });
   },
   error: (...args: any[]) => {
-    console.error(...args);
+    logMessage({
+      level: "error",
+      message: toMessage(...args),
+      timestamp: new Date().toISOString(),
+    });
   },
   debug: (...args: any[]) => {
-    console.debug(...args);
+    logMessage({
+      level: "debug",
+      message: toMessage(...args),
+      timestamp: new Date().toISOString(),
+    });
   },
 };
 

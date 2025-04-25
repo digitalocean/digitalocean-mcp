@@ -189,7 +189,8 @@ export const GetDeploymentLogsUrl: ToolArgs<
 > = {
   name: "get_deployment_logs_url",
   description: `
-    Get the URL of the logs for a deployment.
+    Get the URL of the logs for a deployment. Before fetching the logs, you need to
+    get the URL of the logs. 
   `,
   parameters: GetDeploymentLogsUrlSchema.shape,
   cb: async (params, extra) => {
