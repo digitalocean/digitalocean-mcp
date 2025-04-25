@@ -1,6 +1,6 @@
 {
   "name": "@digitalocean/mcp",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "DigitalOcean MCP",
   "repository": {
     "type": "git",
@@ -14,6 +14,9 @@
   "bin": {
     "mcp": "build/index.js"
   },
+  "files": [
+    "build"
+  ],
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
