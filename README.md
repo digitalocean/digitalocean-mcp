@@ -18,32 +18,6 @@ This MCP server exposes DigitalOcean App Platform functionality through standard
 - Handle app rollbacks
 - View bandwidth metrics
 
-## Prerequisites
-
-- Node.js 16 or higher
-- A DigitalOcean account
-- A DigitalOcean Personal Access Token with appropriate permissions
-
-## Installation
-
-1. Clone the repository:
-
-   ```bash
-   git clone https://github.com/yourusername/digitalocean-mcp-server.git
-   cd digitalocean-mcp-server
-   ```
-
-2. Install dependencies:
-
-   ```bash
-   npm install
-   ```
-
-3. Build the project:
-   ```bash
-   npm run build
-   ```
-
 ## Setting up with Claude Desktop
 
 1. Open Claude Desktop
@@ -55,8 +29,8 @@ This MCP server exposes DigitalOcean App Platform functionality through standard
 {
   "mcpServers": {
     "digitalocean": {
-      "command": "/usr/local/bin/node",
-      "args": ["/path/to/digitalocean-mcp-server/build/index.js", "stdio"],
+      "command": "npx",
+      "args": ["@digitalocean/mcp"],
       "env": {
         "DIGITALOCEAN_API_TOKEN": "your_personal_access_token"
       }
@@ -65,9 +39,8 @@ This MCP server exposes DigitalOcean App Platform functionality through standard
 }
 ```
 
-5. Replace `/path/to/digitalocean-mcp-server/build/index.js` with the actual path to the built index.js file
-6. Replace `your_personal_access_token` with your actual DigitalOcean API token
-7. Save the file and restart Claude Desktop
+5. Replace `your_personal_access_token` with your actual DigitalOcean API token
+6. Save the file and restart Claude Desktop
 
 ## Setting up with Cursor
 
@@ -79,8 +52,8 @@ This MCP server exposes DigitalOcean App Platform functionality through standard
 {
   "mcpServers": {
     "digitalocean": {
-      "command": "/usr/local/bin/node",
-      "args": ["/path/to/digitalocean-mcp-server/build/index.js", "stdio"],
+      "command": "npx",
+      "args": ["@digitalocean/mcp"],
       "env": {
         "DIGITALOCEAN_API_TOKEN": "your_personal_access_token"
       }
@@ -89,9 +62,8 @@ This MCP server exposes DigitalOcean App Platform functionality through standard
 }
 ```
 
-4. Replace `/path/to/digitalocean-mcp-server/build/index.js` with the actual path to the built index.js file
-5. Replace `your_personal_access_token` with your actual DigitalOcean API token
-6. Save the file and ensure the server is activated in Cursor Settings → MCP
+4. Replace `your_personal_access_token` with your actual DigitalOcean API token
+5. Save the file and ensure the server is activated in Cursor Settings → MCP
 
 ## Using with Claude Desktop or Cursor
 
@@ -165,9 +137,6 @@ Here's a quick overview of the available tools:
 ### Common Issues
 
 - **Authentication Problems**: Ensure your DigitalOcean API token is valid and has the necessary permissions
-- **Path Issues**: Make sure the paths in your configuration are absolute paths, not relative
-- **Node Path**: Verify the path to your Node.js executable is correct (use `which node` on macOS/Linux or `where node` on Windows to find it)
-- **Permission Errors**: Ensure the built files have the correct permissions
 
 ### If Tools Are Not Showing Up
 
