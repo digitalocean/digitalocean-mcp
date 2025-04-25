@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import logger from "./logger";
 import { createServer, startStdioServer } from "./server";
 import dotenv from "dotenv";

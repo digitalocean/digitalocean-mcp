@@ -3,6 +3,7 @@ import { registerAppTools } from "./tools/app";
 
 import { DOMcpServer } from "./DOMcpServer";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import logger from "./logger";
 
 export function createServer(): McpServer {
   const server = new DOMcpServer({
@@ -16,5 +17,7 @@ export function createServer(): McpServer {
 
 export function startStdioServer(server: McpServer) {
   const transport = new StdioServerTransport();
-  return server.connect(transport);
+  return server.connect(transport).then(() => {
+    logger.info("DigitalOcean MCP Server started ...");
+  });
 }
