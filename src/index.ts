@@ -12,6 +12,6 @@ async function main() {
 }
 
 main().catch((error) => {
-  logger.error("Error starting server:", error);
+  logger.error("Error starting server:", error.message);
   process.exit(1);
 });

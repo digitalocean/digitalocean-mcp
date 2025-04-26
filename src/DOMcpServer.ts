@@ -2,7 +2,9 @@ import {
   McpServer,
   ToolCallback,
 } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { ServerOptions } from "@modelcontextprotocol/sdk/server/index.js";
 import { ZodRawShape } from "zod";
+import { Implementation } from "@modelcontextprotocol/sdk/types.js";
 
 export type ToolArgs<Args extends undefined | ZodRawShape = undefined> = {
   name: string;
@@ -12,8 +14,8 @@ export type ToolArgs<Args extends undefined | ZodRawShape = undefined> = {
 };
 
 export class DOMcpServer extends McpServer {
-  constructor(options: { name: string; version: string }) {
-    super(options);
+  constructor(serverInfo: Implementation, options?: ServerOptions) {
+    super(serverInfo, options);
   }
 
   public registerTool<Args extends ZodRawShape | undefined = undefined>({
