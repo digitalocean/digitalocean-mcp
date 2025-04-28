@@ -12,7 +12,6 @@ import {
   post_Apps_create,
   post_Apps_create_deployment,
   post_Apps_create_rollback,
-  post_Apps_restart,
   post_Apps_revert_rollback,
   post_Apps_validate_appSpec,
   post_Apps_validate_rollback,
@@ -23,7 +22,7 @@ import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import { z } from "zod";
 import { DOMcpServer, ToolArgs } from "../DOMcpServer";
 
-export const ListApps: ToolArgs<typeof get_Apps_list.parameters.shape> = {
+const ListApps: ToolArgs<typeof get_Apps_list.parameters.shape> = {
   name: "list_apps",
   description: `
     List all apps on your account. Information about the current active
@@ -55,12 +54,15 @@ export const ListApps: ToolArgs<typeof get_Apps_list.parameters.shape> = {
 
     return {
       content,
-      _meta: res,
+      _meta: {
+        links: res.links,
+        meta: res.meta,
+      },
     };
   },
 };
 
-export const CreateApp: ToolArgs<typeof post_Apps_create.parameters.shape> = {
+const CreateApp: ToolArgs<typeof post_Apps_create.parameters.shape> = {
   name: "create_app",
   description: `
     Create a new app by submitting an app specification. For documentation
@@ -84,7 +86,7 @@ export const CreateApp: ToolArgs<typeof post_Apps_create.parameters.shape> = {
   },
 };
 
-export const GetApp: ToolArgs<typeof get_Apps_get.parameters.shape> = {
+const GetApp: ToolArgs<typeof get_Apps_get.parameters.shape> = {
   name: "get_app",
   description: "Get an app by ID",
   parameters: get_Apps_get.parameters.shape,
@@ -107,7 +109,7 @@ export const GetApp: ToolArgs<typeof get_Apps_get.parameters.shape> = {
   },
 };
 
-export const UpdateApp: ToolArgs<typeof put_Apps_update.parameters.shape> = {
+const UpdateApp: ToolArgs<typeof put_Apps_update.parameters.shape> = {
   name: "update_app",
   description: `
     Update an existing app by submitting a new app specification. For
@@ -132,7 +134,7 @@ export const UpdateApp: ToolArgs<typeof put_Apps_update.parameters.shape> = {
   },
 };
 
-export const DeleteApp: ToolArgs<typeof delete_Apps_delete.parameters.shape> = {
+const DeleteApp: ToolArgs<typeof delete_Apps_delete.parameters.shape> = {
   name: "delete_app",
   description: "Delete an app by ID",
   parameters: delete_Apps_delete.parameters.shape,
@@ -152,28 +154,6 @@ export const DeleteApp: ToolArgs<typeof delete_Apps_delete.parameters.shape> = {
   },
 };
 
-export const RestartApp: ToolArgs<typeof post_Apps_restart.parameters.shape> = {
-  name: "restart_app",
-  description: "Restart an app by ID",
-  parameters: post_Apps_restart.parameters.shape,
-  cb: async (params, extra) => {
-    try {
-      const { client } = createClient(extra);
-      const res = await client.post(`/v2/apps/{app_id}/restart`, params);
-      return {
-        content: [
-          { type: "text", text: JSON.stringify(res.deployment, null, 2) },
-        ],
-      };
-    } catch (error) {
-      return {
-        content: [{ type: "text", text: `Error restarting app: ${error}` }],
-        isError: true,
-      };
-    }
-  },
-};
-
 const GetDeploymentLogsUrlSchema = z.object({
   deployment_id: z
     .string()
@@ -184,65 +164,64 @@ const GetDeploymentLogsUrlSchema = z.object({
   type: z.enum(["BUILD", "DEPLOY", "RUN", "RUN_RESTARTED"]),
   app_id: z.string().describe("The ID of the app."),
 });
-export const GetDeploymentLogsUrl: ToolArgs<
-  typeof GetDeploymentLogsUrlSchema.shape
-> = {
-  name: "get_deployment_logs_url",
-  description: `
-    Get the URL of the logs for a deployment. Before fetching the logs, you need to
+const GetDeploymentLogsUrl: ToolArgs<typeof GetDeploymentLogsUrlSchema.shape> =
+  {
+    name: "get_deployment_logs_url",
+    description: `
+    Gets the URL of the logs for a deployment. Before fetching the logs, you need to
     get the URL of the logs. 
   `,
-  parameters: GetDeploymentLogsUrlSchema.shape,
-  cb: async (params, extra) => {
-    try {
-      const { client } = createClient(extra);
-      let content: CallToolResult["content"] = [];
-      if (params.deployment_id) {
-        const res = await client.get(
-          `/v2/apps/{app_id}/deployments/{deployment_id}/logs`,
-          {
+    parameters: GetDeploymentLogsUrlSchema.shape,
+    cb: async (params, extra) => {
+      try {
+        const { client } = createClient(extra);
+        let content: CallToolResult["content"] = [];
+        if (params.deployment_id) {
+          const res = await client.get(
+            `/v2/apps/{app_id}/deployments/{deployment_id}/logs`,
+            {
+              query: {
+                type: params.type,
+              },
+              path: {
+                app_id: params.app_id,
+                deployment_id: params.deployment_id,
+              },
+            }
+          );
+          content.push({
+            type: "text",
+            text: JSON.stringify(res, null, 2),
+          });
+        } else {
+          const res = await client.get(`/v2/apps/{app_id}/logs`, {
             query: {
               type: params.type,
             },
             path: {
               app_id: params.app_id,
-              deployment_id: params.deployment_id,
             },
-          }
-        );
-        content.push({
-          type: "text",
-          text: JSON.stringify(res, null, 2),
-        });
-      } else {
-        const res = await client.get(`/v2/apps/{app_id}/logs`, {
-          query: {
-            type: params.type,
-          },
-          path: {
-            app_id: params.app_id,
-          },
-        });
-        content.push({
-          type: "text",
-          text: JSON.stringify(res, null, 2),
-        });
+          });
+          content.push({
+            type: "text",
+            text: JSON.stringify(res, null, 2),
+          });
+        }
+        return {
+          content,
+        };
+      } catch (error) {
+        return {
+          content: [{ type: "text", text: `Error getting logs: ${error}` }],
+        };
       }
-      return {
-        content,
-      };
-    } catch (error) {
-      return {
-        content: [{ type: "text", text: `Error getting logs: ${error}` }],
-      };
-    }
-  },
-};
+    },
+  };
 const DownloadLogsSchema = z.object({
   url: z.string().describe("The URL to the bucket containing the logs"),
 });
 
-export const DownloadLogs: ToolArgs<typeof DownloadLogsSchema.shape> = {
+const DownloadLogs: ToolArgs<typeof DownloadLogsSchema.shape> = {
   name: "download_logs",
   description: `
     Give the URL of the logs, download the logs and return them as a string.
@@ -264,7 +243,7 @@ export const DownloadLogs: ToolArgs<typeof DownloadLogsSchema.shape> = {
   },
 };
 
-export const ListDeployments: ToolArgs<
+const ListDeployments: ToolArgs<
   typeof get_Apps_list_deployments.parameters.shape
 > = {
   name: "list_deployments",
@@ -301,7 +280,7 @@ export const ListDeployments: ToolArgs<
   },
 };
 
-export const CreateDeployment: ToolArgs<
+const CreateDeployment: ToolArgs<
   typeof post_Apps_create_deployment.parameters.shape
 > = {
   name: "create_deployment",
@@ -326,33 +305,34 @@ export const CreateDeployment: ToolArgs<
   },
 };
 
-export const GetDeployment: ToolArgs<
-  typeof get_Apps_get_deployment.parameters.shape
-> = {
-  name: "get_deployment",
-  description: "Get a deployment by ID",
-  parameters: get_Apps_get_deployment.parameters.shape,
-  cb: async (params, extra) => {
-    try {
-      const { client } = createClient(extra);
-      const res = await client.get(
-        `/v2/apps/{app_id}/deployments/{deployment_id}`,
-        params
-      );
-      const deployment = res.deployment;
-      return {
-        content: [{ type: "text", text: JSON.stringify(deployment) }],
-      };
-    } catch (error) {
-      return {
-        content: [{ type: "text", text: `Error getting deployment: ${error}` }],
-        isError: true,
-      };
-    }
-  },
-};
+const GetDeployment: ToolArgs<typeof get_Apps_get_deployment.parameters.shape> =
+  {
+    name: "get_deployment",
+    description: "Get a deployment by ID",
+    parameters: get_Apps_get_deployment.parameters.shape,
+    cb: async (params, extra) => {
+      try {
+        const { client } = createClient(extra);
+        const res = await client.get(
+          `/v2/apps/{app_id}/deployments/{deployment_id}`,
+          params
+        );
+        const deployment = res.deployment;
+        return {
+          content: [{ type: "text", text: JSON.stringify(deployment) }],
+        };
+      } catch (error) {
+        return {
+          content: [
+            { type: "text", text: `Error getting deployment: ${error}` },
+          ],
+          isError: true,
+        };
+      }
+    },
+  };
 
-export const CancelDeployment: ToolArgs<
+const CancelDeployment: ToolArgs<
   typeof post_Apps_cancel_deployment.parameters.shape
 > = {
   name: "cancel_deployment",
@@ -378,7 +358,7 @@ export const CancelDeployment: ToolArgs<
   },
 };
 
-export const ListInstanceSizes: ToolArgs = {
+const ListInstanceSizes: ToolArgs = {
   name: "list_instance_sizes",
   description:
     "List all instance sizes for `service`, `worker`, and `job` components supported by App Platform.",
@@ -412,7 +392,7 @@ export const ListInstanceSizes: ToolArgs = {
   },
 };
 
-export const GetInstanceSizeBySlug: ToolArgs<
+const GetInstanceSizeBySlug: ToolArgs<
   typeof get_Apps_get_instanceSize.parameters.shape
 > = {
   name: "get_instance_size_by_slug",
@@ -440,7 +420,7 @@ export const GetInstanceSizeBySlug: ToolArgs<
   },
 };
 
-export const ListRegions: ToolArgs = {
+const ListRegions: ToolArgs = {
   name: "list_app_regions",
   description: "List all regions supported by App Platform.",
   cb: async (extra) => {
@@ -472,7 +452,7 @@ export const ListRegions: ToolArgs = {
   },
 };
 
-export const ValidateAppSpec: ToolArgs<
+const ValidateAppSpec: ToolArgs<
   typeof post_Apps_validate_appSpec.parameters.shape
 > = {
   name: "validate_app_spec",
@@ -501,9 +481,7 @@ export const ValidateAppSpec: ToolArgs<
   },
 };
 
-export const ListAppAlerts: ToolArgs<
-  typeof get_Apps_list_alerts.parameters.shape
-> = {
+const ListAppAlerts: ToolArgs<typeof get_Apps_list_alerts.parameters.shape> = {
   name: "list_app_alerts",
   description: `
     List alerts associated to the app and any components. This includes
@@ -532,7 +510,7 @@ export const ListAppAlerts: ToolArgs<
   },
 };
 
-export const UpdateAppAlertDestinations: ToolArgs<
+const UpdateAppAlertDestinations: ToolArgs<
   typeof post_Apps_assign_alertDestinations.parameters.shape
 > = {
   name: "update_app_alert_destinations",
@@ -559,11 +537,10 @@ export const UpdateAppAlertDestinations: ToolArgs<
   },
 };
 
-export const RollbackApp: ToolArgs<
-  typeof post_Apps_create_rollback.parameters.shape
-> = {
-  name: "rollback_app",
-  description: `
+const RollbackApp: ToolArgs<typeof post_Apps_create_rollback.parameters.shape> =
+  {
+    name: "rollback_app",
+    description: `
     Rollback an app to a previous deployment. A new deployment will be
     created to perform the rollback.
     The app will be pinned to the rollback deployment preventing any new
@@ -571,24 +548,24 @@ export const RollbackApp: ToolArgs<
     To resume deployments, the rollback must beeither committed or reverted.
     It is recommended to use the Validate App Rollback endpoint to double check if the rollback is valid and if there are any warnings.
   `,
-  parameters: post_Apps_create_rollback.parameters.shape,
-  cb: async (params, extra) => {
-    try {
-      const { client } = createClient(extra);
-      const res = await client.post(`/v2/apps/{app_id}/rollback`, params);
-      return {
-        content: [{ type: "text", text: JSON.stringify(res, null, 2) }],
-      };
-    } catch (error) {
-      return {
-        content: [{ type: "text", text: `Error rolling back app: ${error}` }],
-        isError: true,
-      };
-    }
-  },
-};
+    parameters: post_Apps_create_rollback.parameters.shape,
+    cb: async (params, extra) => {
+      try {
+        const { client } = createClient(extra);
+        const res = await client.post(`/v2/apps/{app_id}/rollback`, params);
+        return {
+          content: [{ type: "text", text: JSON.stringify(res, null, 2) }],
+        };
+      } catch (error) {
+        return {
+          content: [{ type: "text", text: `Error rolling back app: ${error}` }],
+          isError: true,
+        };
+      }
+    },
+  };
 
-export const ValidateAppRollback: ToolArgs<
+const ValidateAppRollback: ToolArgs<
   typeof post_Apps_validate_rollback.parameters.shape
 > = {
   name: "validate_app_rollback",
@@ -620,7 +597,7 @@ export const ValidateAppRollback: ToolArgs<
   },
 };
 
-export const CommitAppRollback: ToolArgs<
+const CommitAppRollback: ToolArgs<
   typeof post_Apps_commit_rollback.parameters.shape
 > = {
   name: "commit_app_rollback",
@@ -649,7 +626,7 @@ export const CommitAppRollback: ToolArgs<
   },
 };
 
-export const RevertAppRollback: ToolArgs<
+const RevertAppRollback: ToolArgs<
   typeof post_Apps_revert_rollback.parameters.shape
 > = {
   name: "revert_app_rollback",
@@ -686,7 +663,7 @@ export function registerAppTools(server: DOMcpServer) {
   server.registerTool(GetApp);
   server.registerTool(UpdateApp);
   server.registerTool(DeleteApp);
-  server.registerTool(RestartApp);
+  server.registerTool(GetDeploymentLogsUrl);
   server.registerTool(DownloadLogs); // Custom tool to download logs
   server.registerTool(ListDeployments);
   server.registerTool(CreateDeployment);

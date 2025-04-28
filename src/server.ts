@@ -4,7 +4,7 @@ import { DOMcpServer } from "./DOMcpServer";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import logger from "./logger";
 import pkg from "../package.json";
-import { subscribe } from "diagnostics_channel";
+import { registerDatabaseTools } from "./tools/databases";
 
 export function createServer(): McpServer {
   const server = new DOMcpServer(
@@ -17,6 +17,7 @@ export function createServer(): McpServer {
 
   logger.createStdioLogger(server);
   registerAppTools(server);
+  registerDatabaseTools(server);
   return server;
 }
 
