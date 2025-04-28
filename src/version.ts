@@ -1,2 +1,2 @@
 // THIS FILE IS GENERATED. DO NOT MODIFY.
-export const LIB_VERSION = "0.0.11";
+export const LIB_VERSION = "0.0.12";
