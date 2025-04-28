@@ -10,7 +10,7 @@ export function createServer(): McpServer {
   const server = new DOMcpServer(
     {
       name: "DigitalOcean MCP Server",
-      version: "1.0.0",
+      version: pkg.version,
     },
     { capabilities: { logging: { subscribe: true } } }
   );

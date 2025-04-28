@@ -18,7 +18,7 @@
     "build"
   ],
   "scripts": {
-    "prebuild": "node -p \"'// This file is generated. Do not modify.\\nexport const LIB_VERSION = ' + JSON.stringify(require('./package.json').version) + ';'\" > src/version.ts",
+    "prebuild": "node -p \"'// THIS FILE IS GENERATED. DO NOT MODIFY.\\nexport const LIB_VERSION = ' + JSON.stringify(require('./package.json').version) + ';'\" > src/version.ts",
     "build": "tsc",
     "dev": "tsc --watch",
     "start:stdio": "node build/index.js",
@@ -34,5 +34,6 @@
     "js-yaml": "^4.1.0",
     "typed-openapi": "^0.10.1",
     "typescript": "^5.8.3"
-  }
+  },
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }

@@ -1,2 +1,2 @@
-// This file is generated. Do not modify.
+// THIS FILE IS GENERATED. DO NOT MODIFY.
 export const LIB_VERSION = "0.0.11";
