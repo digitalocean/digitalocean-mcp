@@ -1,52 +1,66 @@
 # DigitalOcean MCP Server
 
-A [Model Context Protocol (MCP)](https://modelcontextprotocol.io/introduction) server that provides tools to interact with DigitalOcean's [App Platform](https://www.digitalocean.com/products/app-platform) services.
+[![npm version](https://img.shields.io/npm/v/@digitalocean/mcp.svg)](https://www.npmjs.com/package/@digitalocean/mcp) [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-## Overview
+This MCP server exposes DigitalOcean App Platform functionality through standardized tools that can be used by any MCP client, including [Claude Desktop](https://claude.ai/download) and [Cursor](https://docs.cursor.com/context/model-context-protocol). It enables AI assistants to directly manage your DigitalOcean apps without needing to write code or remember complex API endpoints.
 
-This MCP server exposes DigitalOcean App Platform functionality through standardized tools that can be used by any MCP client, including Claude Desktop and [Cursor](https://docs.cursor.com/context/model-context-protocol). It enables AI assistants to directly manage your DigitalOcean apps without needing to write code or remember complex API endpoints.
+---
+
+## Table of Contents
+
+- [DigitalOcean MCP Server](#digitalocean-mcp-server)
+  - [Table of Contents](#table-of-contents)
+  - [Features](#features)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+  - [Configuration](#configuration)
+    - [Common Config Snippet](#common-config-snippet)
+    - [Claude Desktop Setup](#claude-desktop-setup)
+    - [Cursor Setup](#cursor-setup)
+  - [Usage Examples](#usage-examples)
+  - [Available Tools](#available-tools)
+  - [Troubleshooting](#troubleshooting)
+  - [Contributing](#contributing)
+  - [License](#license)
+
+---
 
 ## Features
 
-- Manage apps (create, update, delete, restart)
-- Work with deployments (list, create, get, cancel)
-- Access logs for apps and deployments
-- Retrieve execution URLs for components
-- View instance sizes and regions
-- Validate app specifications
-- Manage app alerts
-- Handle app rollbacks
-- View bandwidth metrics
+- **App Management**: create, update, delete, restart  
+- **Deployment Control**: list, create, get details, cancel  
+- **Logs & Metrics**: fetch build/app logs, bandwidth stats  
+- **Infrastructure Info**: supported regions, instance sizes  
+- **Spec Validation**: validate app specs and rollbacks  
+- **Alerts & Rollbacks**: configure alerts, manage rollbacks  
 
-## Setting up with Claude Desktop
+---
 
-1. Open Claude Desktop
-2. Go to Settings → Developer → Edit Config
-3. This will open `claude_desktop_config.json`
-4. Add or update the configuration with:
+## Prerequisites
 
-```json
-{
-  "mcpServers": {
-    "digitalocean": {
-      "command": "npx",
-      "args": ["@digitalocean/mcp"],
-      "env": {
-        "DIGITALOCEAN_API_TOKEN": "your_personal_access_token"
-      }
-    }
-  }
-}
-```
+- **Node.js** (≥ 12) & **npm**  
+- A [DigitalOcean Personal Access Token](https://cloud.digitalocean.com/account/api/tokens) with **App Platform** scopes  
+- Your MCP client of choice:
+  - [Claude Desktop](https://claude.ai/download) (v1.9+)
+  - [Cursor](https://docs.cursor.com/context/model-context-protocol)
 
-5. Replace `your_personal_access_token` with your actual DigitalOcean API token
-6. Save the file and restart Claude Desktop
+---
 
-## Setting up with Cursor
+## Installation
 
-1. Go to Cursor Settings → MCP → Click on "Add a new global MCP server"
-2. This will open `~/.cursor/mcp.json`
-3. Add or update the configuration with the same JSON as used for Claude Desktop:
+```bash
+npm install -g @digitalocean/mcp
+# or run via npx:
+npx @digitalocean/mcp
+````
+
+---
+
+## Configuration
+
+### Common Config Snippet
+
+Add this to your MCP client’s JSON:
 
 ```json
 {
@@ -55,99 +69,104 @@ This MCP server exposes DigitalOcean App Platform functionality through standard
       "command": "npx",
       "args": ["@digitalocean/mcp"],
       "env": {
-        "DIGITALOCEAN_API_TOKEN": "your_personal_access_token"
+        "DIGITALOCEAN_API_TOKEN": "YOUR_DO_TOKEN"
       }
     }
   }
 }
 ```
 
-4. Replace `your_personal_access_token` with your actual DigitalOcean API token
-5. Save the file and ensure the server is activated in Cursor Settings → MCP
+* **command**: how to launch the server (`npx` or full path)
+* **args**: the package name
+* **env**: insert your DO token here
 
-## Using with Claude Desktop or Cursor
+### Claude Desktop Setup
 
-Once configured, you can start chatting with the AI assistant using natural language to manage your DigitalOcean App Platform resources. Here are some examples of what you can ask:
+1. In Claude Desktop: **Settings → Developer → Edit Config**
+2. Paste the **Common Config Snippet** into `claude_desktop_config.json`
+3. Replace `YOUR_DO_TOKEN` with your token
+4. Save and **restart** Claude Desktop
+5. You should see a new MCP server named “digitalocean” in the UI
 
-### Basic App Management
+### Cursor Setup
 
-- "How many DigitalOcean apps do I have?"
-- "List all my current apps on DigitalOcean"
-- "Show me details for my app called 'customer-portal'"
-- "Restart my app 'api-backend'"
-- "Delete the app named 'test-environment'"
+1. In Cursor: **Settings → MCP → Add a new global MCP server**
+2. Cursor will open `~/.cursor/mcp.json`
+3. Paste the **Common Config Snippet**
+4. Replace `YOUR_DO_TOKEN`
+5. Save and **enable** “digitalocean” in Cursor’s MCP settings
 
-### Deployments
+---
 
-- "When was the last deployment for my 'production-website' app?"
-- "Show me all deployments for my 'user-service' app"
-- "Cancel the current deployment for my 'staging-env' app"
-- "What's the status of the latest deployment for my 'data-processor' app?"
+## Usage Examples
 
-### Creating and Updating Apps
+Once configured, just ask your AI assistant—no code needed:
 
-- "Create a new static site app on DigitalOcean that deploys from my GitHub repo yourusername/static-website"
-- "Create a Flask app on DigitalOcean with the following specification: Python 3.9, 1 CPU, 1GB RAM, connected to my GitHub repo yourusername/flask-app"
-- "Update my 'api-service' app to use 2GB of RAM instead of 1GB"
-- "Set up a Node.js app that uses a managed PostgreSQL database"
+```text
+“How many DigitalOcean apps do I have?”
+“List all my apps on DigitalOcean”
+“Show logs for the ‘web’ component of my ‘api-service’ app”
+“Create a new Flask app with Python 3.9, 1 CPU, 1 GB RAM from github.com/you/flask-app”
+“Cancel the current deployment for my ‘staging-env’ app”
+“What regions can I deploy my apps to?”
+```
 
-### Logs and Debugging
+The client will call the MCP server under the hood and return JSON (or plain-English summaries).
 
-- "Show me the logs for the 'web' component of my 'ecommerce' app"
-- "Get the latest build logs for my 'backend-api' app"
-- "What errors are showing up in my 'auth-service' deployment logs?"
-
-### Infrastructure Information
-
-- "What regions can I deploy my DigitalOcean apps to?"
-- "List all available instance sizes for app components"
-- "What's the smallest instance size I can use for a service component?"
-- "Show me my bandwidth usage across all apps this month"
+---
 
 ## Available Tools
 
-Here's a quick overview of the available tools:
+| Category        | Commands                                                                              |
+| --------------- | ------------------------------------------------------------------------------------- |
+| **Apps**        | `list_apps`, `create_app`, `get_app`, `update_app`, `delete_app`, `restart_app`       |
+| **Deployments** | `list_deployments`, `create_deployment`, `get_deployment`, `cancel_deployment`        |
+| **Logs**        | `retrieve_active_deployment_logs`, `download_logs`                                    |
+| **Infra**       | `list_app_regions`, `list_instance_sizes`                                             |
+| **Alerts**      | `list_app_alerts`, `update_app_alert_destinations`                                    |
+| **Rollbacks**   | `validate_app_rollback`, `rollback_app`, `commit_app_rollback`, `revert_app_rollback` |
+| **Metrics**     | `get_app_bandwidth_daily_metrics`, `get_all_app_bandwidth_daily_metrics`              |
+| **Validation**  | `validate_app_spec`                                                                   |
 
-- `list_apps` - List all apps on your account
-- `create_app` - Create a new app with an app specification
-- `get_app` - Get details about a specific app
-- `update_app` - Update an existing app
-- `delete_app` - Delete an app
-- `restart_app` - Restart an app
-- `list_deployments` - List all deployments for an app
-- `create_deployment` - Create a new deployment
-- `get_deployment` - Get details about a specific deployment
-- `cancel_deployment` - Cancel a deployment
-- `retrieve_active_deployment_logs` - Get logs for a component of the active deployment
-- `download_logs` - Download logs from a URL
-- `list_app_regions` - List all regions supported by App Platform
-- `list_instance_sizes` - List all instance sizes for components
-- `validate_app_spec` - Validate an app specification
-- `list_app_alerts` - List alerts for an app
-- `update_app_alert_destinations` - Update alert destinations
-- `rollback_app` - Rollback an app to a previous deployment
-- `validate_app_rollback` - Validate an app rollback
-- `commit_app_rollback` - Commit an app rollback
-- `revert_app_rollback` - Revert an app rollback
-- `get_app_bandwidth_daily_metrics` - Get bandwidth metrics for an app
-- `get_all_app_bandwidth_daily_metrics` - Get bandwidth metrics for all apps
+*For the full list and parameter details, see the package’s README after installing.*
+
+---
 
 ## Troubleshooting
 
-### Common Issues
+* **Server fails to start**
 
-- **Authentication Problems**: Ensure your DigitalOcean API token is valid and has the necessary permissions
+  * Run `npx @digitalocean/mcp` in your shell—check for errors.
+  * Ensure your token has App Platform permissions.
 
-### If Tools Are Not Showing Up
+* **“digitalocean” doesn’t appear in MCP client**
 
-1. Check that the MCP server icon appears in the UI
-2. Verify your API token has the necessary permissions
-3. Check the app logs for any error messages
+  * Verify you edited the correct JSON file (Claude vs. Cursor).
+  * Restart the client after saving changes.
 
-## License
+* **Permission errors on API calls**
 
-[MIT License](LICENSE)
+  * Double-check your token scopes.
+  * Generate a fresh token with full App Platform access.
+
+* **Unexpected JSON parsing errors**
+
+  * Make sure your JSON is valid—no stray commas or comments.
+  * Confirm your MCP client version supports external servers.
+
+---
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+1. Fork this repo
+2. Create a branch (`git checkout -b feature/awesome-tool`)
+3. Make your changes and add tests
+4. Submit a Pull Request
+
+We welcome bug fixes, new features, and improved docs.
+
+---
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
