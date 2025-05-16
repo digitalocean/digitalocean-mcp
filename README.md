@@ -29,11 +29,11 @@ This MCP server exposes DigitalOcean App Platform functionality through standard
 
 You can now do things like:
 
-- Deploy a new app from a GitHub repo
-- Quickly redeploy an existing app with the latest changes
-- See logs, restart components, or delete old environments
-- Check available regions and create apps based on what’s supported
-- Build and deploy an app from scratch, entirely through your assistant
+- **Deploy a new app** from a GitHub repo
+- **Quickly redeploy an existing app** with the latest changes
+- **See logs,** restart components, or delete old environments
+- **Check available regions** and create apps based on what’s supported
+- **Build and deploy an app from scratch**, entirely through your assistant
 
 ...and more!
 
