@@ -12,8 +12,7 @@ This MCP server exposes DigitalOcean App Platform functionality through standard
   - [Table of Contents](#table-of-contents)
   - [Features](#features)
   - [Prerequisites](#prerequisites)
-  - [Installation](#installation)
-  - [Configuration](#configuration)
+  - [Setting up your DigitalOcean MCP Server](#setting-up)
     - [Common Config Snippet](#common-config-snippet)
     - [Claude Desktop Setup](#claude-desktop-setup)
     - [Cursor Setup](#cursor-setup)
@@ -37,26 +36,20 @@ This MCP server exposes DigitalOcean App Platform functionality through standard
 ---
 
 ## Prerequisites
+To get started, you’ll need:
 
 - **Node.js** (≥ 12) & **npm**  
 - A [DigitalOcean Personal Access Token](https://cloud.digitalocean.com/account/api/tokens) with **App Platform** scopes  
-- Your MCP client of choice:
+- A supported MCP client:
   - [Claude Desktop](https://claude.ai/download) (v1.9+)
+  - [Claude Code](https://docs.anthropic.com/en/docs/claude-code/overview)
   - [Cursor](https://docs.cursor.com/context/model-context-protocol)
+  - [Windsurf](https://windsurf.com)
+- (Optional but helpful): [GitHub CLI (gh)](https://cli.github.com) -  useful for cloning repos, creating projects, and working with GitHub-based apps.
 
 ---
 
-## Installation
-
-```bash
-npm install -g @digitalocean/mcp
-# or run via npx:
-npx @digitalocean/mcp
-````
-
----
-
-## Configuration
+## Setting up your DigitalOcean MCP Server
 
 ### Common Config Snippet
 
@@ -90,11 +83,21 @@ Add this to your MCP client’s JSON:
 
 ### Cursor Setup
 
-1. In Cursor: **Settings → MCP → Add a new global MCP server**
+1. In Cursor: **Settings → Cursor Settings → MCP → Add a new global MCP server**
 2. Cursor will open `~/.cursor/mcp.json`
 3. Paste the **Common Config Snippet**
 4. Replace `YOUR_DO_TOKEN`
-5. Save and **enable** “digitalocean” in Cursor’s MCP settings
+5. Save, and return to MCP Settings.
+6. You should now see “digitalocean” in Cursor’s MCP settings
+
+### Windsurf Setup
+
+1. In Windsurf: **Settings → Windsurf Settings → Cascade → MCP → Add Server → Add custom server**
+2. Cursor will open `~/.codeium/windsurf/mcp_config.json` 
+3. Paste the **Common Config Snippet**
+4. Replace `YOUR_DO_TOKEN`
+5. Save, and return to MCP Settings.
+6. You should now see “digitalocean” in Windsurf's MCP settings
 
 ---
 
