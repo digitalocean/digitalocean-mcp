@@ -2,41 +2,45 @@
 
 [![npm version](https://img.shields.io/npm/v/@digitalocean/mcp.svg)](https://www.npmjs.com/package/@digitalocean/mcp) [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-This MCP server exposes DigitalOcean App Platform functionality through standardized tools that can be used by any MCP client, including [Claude Desktop](https://claude.ai/download) and [Cursor](https://docs.cursor.com/context/model-context-protocol). It enables AI assistants to directly manage your DigitalOcean apps without needing to write code or remember complex API endpoints.
+This MCP server exposes DigitalOcean App Platform functionality through standardized tools that can be used by any MCP client, including [Claude Desktop](https://claude.ai/download) and [Cursor](https://docs.cursor.com/context/model-context-protocol). It enables AI assistants to directly manage your DigitalOcean apps without writing code or memorizing API endpoints.
+
 
 ---
 
-## Table of Contents
+## 📚 Table of Contents
 
-- [DigitalOcean MCP Server](#digitalocean-mcp-server)
-  - [Table of Contents](#table-of-contents)
-  - [Features](#features)
-  - [Prerequisites](#prerequisites)
-  - [Setting up your DigitalOcean MCP Server](#setting-up)
-    - [Common Config Snippet](#common-config-snippet)
-    - [Claude Desktop Setup](#claude-desktop-setup)
-    - [Cursor Setup](#cursor-setup)
-  - [Usage Examples](#usage-examples)
-  - [Available Tools](#available-tools)
-  - [Troubleshooting](#troubleshooting)
-  - [Contributing](#contributing)
-  - [License](#license)
+* [🚀 What Can You Do With It?](#-what-can-you-do-with-it)
+* [🧰 Prerequisites](#-prerequisites)
+* [⚙️ Setting up your DigitalOcean MCP Server](#️-setting-up-your-digitalocean-mcp-server)
+
+  * [Generate Your API Token](#1-generate-your-api-token)
+  * [Add the Server to Your MCP Client](#2-add-the-server-to-your-mcp-client)
+  * [Claude Desktop](#claude-desktop)
+  * [Cursor](#cursor)
+  * [Windsurf Setup](#windsurf-setup)
+* [💬 Example Prompts](#-example-prompts)
+* [🛠 Available Tools](#available-tools)
+* [🧯 Troubleshooting](#troubleshooting)
+* [🤝 Contributing](#contributing)
+* [📄 License](#license)
+
+---
+## 🚀 What Can You Do With It?
+
+You can now do things like:
+
+- Deploy a new app from a GitHub repo
+- Quickly redeploy an existing app with the latest changes
+- See logs, restart components, or delete old environments
+- Check available regions and create apps based on what’s supported
+- Build and deploy an app from scratch, entirely through your assistant
+
+...and more!
 
 ---
 
-## Features
-
-- **App Management**: create, update, delete, restart  
-- **Deployment Control**: list, create, get details, cancel  
-- **Logs & Metrics**: fetch build/app logs, bandwidth stats  
-- **Infrastructure Info**: supported regions, instance sizes  
-- **Spec Validation**: validate app specs and rollbacks  
-- **Alerts & Rollbacks**: configure alerts, manage rollbacks  
-
----
-
-## Prerequisites
-To get started, you’ll need:
+## 🧰 Prerequisites
+To use the DigitalOcean MCP Server, you’ll need:
 
 - **Node.js** (≥ 12) & **npm**  
 - A [DigitalOcean Personal Access Token](https://cloud.digitalocean.com/account/api/tokens) with **App Platform** scopes  
@@ -47,13 +51,18 @@ To get started, you’ll need:
   - [Windsurf](https://windsurf.com)
 - (Optional but helpful): [GitHub CLI (gh)](https://cli.github.com) -  useful for cloning repos, creating projects, and working with GitHub-based apps.
 
+> 💡 You do not need to install anything—this server runs via npx, with just a one-line config added to your MCP client.
+
+
 ---
 
-## Setting up your DigitalOcean MCP Server
+## ⚙️ Setting up your DigitalOcean MCP Server
 
-### Common Config Snippet
+### 1. Generate Your API Token
+Head to [DigitalOcean’s API settings](https://cloud.digitalocean.com/account/api/tokens) and create a new **Personal Access Token** with **App Platform** permissions.
 
-Add this to your MCP client’s JSON:
+### 2. Add the Server to Your MCP Client
+Add this JSON snippet to your client’s MCP config file:
 
 ```json
 {
@@ -69,52 +78,65 @@ Add this to your MCP client’s JSON:
 }
 ```
 
-* **command**: how to launch the server (`npx` or full path)
-* **args**: the package name
-* **env**: insert your DO token here
+Here’s what each part of the snippet does:
 
-### Claude Desktop Setup
+- * **command**: how to launch the server (`npx` or full path)
+- * **args**: the package name
+- * **env**: insert your DO token here
 
-1. In Claude Desktop: **Settings → Developer → Edit Config**
-2. Paste the **Common Config Snippet** into `claude_desktop_config.json`
+Then follow the instructions for your specific tool:
+
+### Claude Desktop
+
+1. Go to **Settings → Developer → Edit Config**
+2. Add the snippet above to `claude_desktop_config.json`
 3. Replace `YOUR_DO_TOKEN` with your token
-4. Save and **restart** Claude Desktop
-5. You should see a new MCP server named “digitalocean” in the UI
+4. Save and **restart Claude Desktop**
+5. You'll see “digitalocean” listed as an available server
 
-### Cursor Setup
+![Claude Desktop MCP Setup](https://github.com/user-attachments/assets/15ff8aed-c2ff-4bba-a0cc-0efabfdb0bcd)
+*Setting up DigitalOcean MCP Server in Claude Desktop*
 
-1. In Cursor: **Settings → Cursor Settings → MCP → Add a new global MCP server**
+
+### Cursor
+
+1. Go to **Settings → Cursor Settings → MCP → Add a new global MCP server**
 2. Cursor will open `~/.cursor/mcp.json`
-3. Paste the **Common Config Snippet**
-4. Replace `YOUR_DO_TOKEN`
+3. Add the snippet above to this json file
+4. Replace `YOUR_DO_TOKEN` with your token
 5. Save, and return to MCP Settings.
 6. You should now see “digitalocean” in Cursor’s MCP settings
+
+![Cursor MCP Setup](https://github.com/user-attachments/assets/da87617b-a368-4ffb-a5f1-2d3fa9a168a4)
+*Setting up DigitalOcean MCP Server in Cursor*
 
 ### Windsurf Setup
 
 1. In Windsurf: **Settings → Windsurf Settings → Cascade → MCP → Add Server → Add custom server**
-2. Cursor will open `~/.codeium/windsurf/mcp_config.json` 
-3. Paste the **Common Config Snippet**
-4. Replace `YOUR_DO_TOKEN`
+2. Windsurf will open `~/.codeium/windsurf/mcp_config.json`
+3. Add the snippet above to this json file
+4. Replace `YOUR_DO_TOKEN` with your token
 5. Save, and return to MCP Settings.
 6. You should now see “digitalocean” in Windsurf's MCP settings
 
+![Windsurf MCP Setup](https://github.com/user-attachments/assets/4408c955-34bd-4f51-92a9-b971bebbd785)
+
+*Setting up DigitalOcean MCP Server in Windsurf*
+
 ---
+## 💬 Example Prompts
 
-## Usage Examples
+Once it’s configured, try asking your assistant:
 
-Once configured, just ask your AI assistant—no code needed:
-
-```text
-“How many DigitalOcean apps do I have?”
-“List all my apps on DigitalOcean”
-“Show logs for the ‘web’ component of my ‘api-service’ app”
-“Create a new Flask app with Python 3.9, 1 CPU, 1 GB RAM from github.com/you/flask-app”
-“Cancel the current deployment for my ‘staging-env’ app”
-“What regions can I deploy my apps to?”
+```
+“List all active apps on my account”
+“Create a new app from https://github.com/do-community/do-one-click-deploy-flask with 1GB RAM in NYC3”
+“Show logs for checkout-service”
+“Cancel the current deployment for marketing-site”
+“Delete the old `staging-env` app”
 ```
 
-The client will call the MCP server under the hood and return JSON (or plain-English summaries).
+The assistant will send the request → the MCP server talks to DigitalOcean → you get structured results, ready to act on.
 
 ---
 
@@ -131,42 +153,36 @@ The client will call the MCP server under the hood and return JSON (or plain-Eng
 | **Metrics**     | `get_app_bandwidth_daily_metrics`, `get_all_app_bandwidth_daily_metrics`              |
 | **Validation**  | `validate_app_spec`                                                                   |
 
-*For the full list and parameter details, see the package’s README after installing.*
-
 ---
 
 ## Troubleshooting
 
-* **Server fails to start**
+### The server doesn’t appear in your client?
+- Make sure your JSON config is saved and valid
+- Restart your MCP client (Claude, Cursor, Windsurf)
 
-  * Run `npx @digitalocean/mcp` in your shell—check for errors.
-  * Ensure your token has App Platform permissions.
+### Token not working?
+- Check that it has App Platform access
+- Try generating a fresh one
 
-* **“digitalocean” doesn’t appear in MCP client**
+### JSON errors?
+- No trailing commas
+- No comments allowed in JSON
 
-  * Verify you edited the correct JSON file (Claude vs. Cursor).
-  * Restart the client after saving changes.
+You can also test the server directly by running:
 
-* **Permission errors on API calls**
-
-  * Double-check your token scopes.
-  * Generate a fresh token with full App Platform access.
-
-* **Unexpected JSON parsing errors**
-
-  * Make sure your JSON is valid—no stray commas or comments.
-  * Confirm your MCP client version supports external servers.
+```
+npx @digitalocean/mcp
+```
 
 ---
 
 ## Contributing
+We’d love your help improving this! Bug reports, new features, and docs improvements are all welcome.
 
 1. Fork this repo
 2. Create a branch (`git checkout -b feature/awesome-tool`)
-3. Make your changes and add tests
-4. Submit a Pull Request
-
-We welcome bug fixes, new features, and improved docs.
+3. Open a PR
 
 ---
 
