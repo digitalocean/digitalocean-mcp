@@ -120,7 +120,7 @@ const UpdateApp: ToolArgs<typeof put_Apps_update.parameters.shape> = {
   cb: async (params, extra) => {
     try {
       const { client } = createClient(extra);
-      const res = await client.put(`/v2/apps/{id}`, params);
+      const res = await client.put("/v2/apps/{id}", params);
       const app = res.app;
       return {
         content: [{ type: "text", text: JSON.stringify(app, null, 2) }],
