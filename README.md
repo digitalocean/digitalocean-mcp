@@ -1,3 +1,5 @@
+[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/digitalocean-digitalocean-mcp-badge.png)](https://mseep.ai/app/digitalocean-digitalocean-mcp)
+
 # DigitalOcean MCP Server
 
 [![npm version](https://img.shields.io/npm/v/@digitalocean/mcp.svg)](https://www.npmjs.com/package/@digitalocean/mcp) [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
