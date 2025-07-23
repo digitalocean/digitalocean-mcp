@@ -1,3 +1,5 @@
+[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/digitalocean-digitalocean-mcp-badge.png)](https://mseep.ai/app/digitalocean-digitalocean-mcp)
+
 # DigitalOcean MCP Server
 
 > **⚠️ ARCHIVE NOTICE**  
